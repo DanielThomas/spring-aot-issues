@@ -25,14 +25,11 @@ public class DemoApplication {
             @Override
             public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
                 String beanName = "GrpcClient_myclient";
-                // Conditional because this runs again and duplicates the AOT registered bean
-                if (!registry.containsBeanDefinition(beanName)) {
-                    AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder
-                            .genericBeanDefinition(GrpClient.class)
-                            .getBeanDefinition();
-                    beanDefinition.addQualifier(new AutowireCandidateQualifier(GrpcSpringClient.class, "myclient"));
-                    registry.registerBeanDefinition("GrpcClient_myclient", beanDefinition);
-                }
+                AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder
+                    .genericBeanDefinition(GrpClient.class)
+                    .getBeanDefinition();
+                beanDefinition.addQualifier(new AutowireCandidateQualifier(GrpcSpringClient.class, "myclient"));
+                registry.registerBeanDefinition("GrpcClient_myclient", beanDefinition);
             }
 
             @Override
