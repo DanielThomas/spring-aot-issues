@@ -10,10 +10,19 @@ version = '0.0.1-SNAPSHOT'
 
 repositories {
 	mavenCentral()
+  	maven {
+    	url 'https://repo.spring.io/snapshot'
+    	content {
+      		includeGroup 'org.springframework'
+    	}
+  	}
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
+
+	processAotClasspath 'org.springframework:spring-beans:6.0.9-SNAPSHOT'
+	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

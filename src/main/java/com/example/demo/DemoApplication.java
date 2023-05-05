@@ -7,9 +7,8 @@ import org.springframework.beans.factory.support.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.support.BeanDefinitionDsl;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -25,10 +24,12 @@ public class DemoApplication {
             @Override
             public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
                 String beanName = "GrpcClient_myclient";
-                // Conditional because this runs again and duplicates the AOT registered bean
+                // Conditional because this runs again and duplgicates the AOT registered bean
                 if (!registry.containsBeanDefinition(beanName)) {
                     AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder
-                            .genericBeanDefinition(GrpClient.class)
+                            .genericBeanDefinition(StubFactoryBean.class)
+                            .addConstructorArgValue(MyClientBlockingStub.class)
+                            .addConstructorArgValue("myclient")
                             .getBeanDefinition();
                     beanDefinition.addQualifier(new AutowireCandidateQualifier(GrpcSpringClient.class, "myclient"));
                     registry.registerBeanDefinition("GrpcClient_myclient", beanDefinition);
@@ -41,13 +42,9 @@ public class DemoApplication {
         };
     }
 
-    static class GrpClient {
-
-    }
-
     @Component
     static class RequiresGrpcClient {
-        RequiresGrpcClient(@GrpcSpringClient("myclient") GrpClient client) {
+        RequiresGrpcClient(@GrpcSpringClient("myclient") MyClientBlockingStub client) {
         }
     }
 
