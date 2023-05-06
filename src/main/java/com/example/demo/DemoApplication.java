@@ -1,13 +1,12 @@
 package com.example.demo;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.BeanDefinitionDsl;
+import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Component;
 
 @SpringBootApplication
@@ -26,11 +25,12 @@ public class DemoApplication {
                 String beanName = "GrpcClient_myclient";
                 // Conditional because this runs again and duplgicates the AOT registered bean
                 if (!registry.containsBeanDefinition(beanName)) {
-                    AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder
-                            .genericBeanDefinition(StubFactoryBean.class)
+                    RootBeanDefinition beanDefinition = (RootBeanDefinition) BeanDefinitionBuilder
+                            .rootBeanDefinition(StubFactoryBean.class)
                             .addConstructorArgValue(MyClientBlockingStub.class)
                             .addConstructorArgValue("myclient")
                             .getBeanDefinition();
+                    beanDefinition.setTargetType(ResolvableType.forClassWithGenerics(StubFactoryBean.class, MyClientBlockingStub.class));
                     beanDefinition.addQualifier(new AutowireCandidateQualifier(GrpcSpringClient.class, "myclient"));
                     registry.registerBeanDefinition("GrpcClient_myclient", beanDefinition);
                 }

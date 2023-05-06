@@ -2,15 +2,16 @@ package com.example.demo;
 
 import org.springframework.beans.factory.FactoryBean;
 
-class StubFactoryBean implements FactoryBean<AbstractStub> {
+class StubFactoryBean<T extends AbstractStub<?>> implements FactoryBean<T> {
 
-    StubFactoryBean(Class<?> clientClass, String clientName) {
+    StubFactoryBean(Class<T> clientClass, String clientName) {
         // Real logic has factories and all kinds of ceremony, we ignore that here
     }
 
     @Override
-    public AbstractStub getObject() {
-        return new MyClientBlockingStub();
+    @SuppressWarnings("unchecked")
+    public T getObject() {
+        return (T) new MyClientBlockingStub();
     }
 
     @Override
