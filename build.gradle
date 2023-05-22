@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework:spring-aspects'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
@@ -27,3 +28,10 @@ java {
 	}
 }
 
+graalvmNative {
+	binaries {
+		main {
+			debug = true
+		}
+	}
+}
